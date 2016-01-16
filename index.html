@@ -2,6 +2,7 @@
 <html lang="en" ng-app='PubNative'>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>PubNative test</title>
     <link rel="stylesheet" href="styles/main.css">
 </head>
@@ -44,6 +45,7 @@
             </div>
             <div class="events-list" ng-repeat='event in calendar.current.events'>
                 <span ng-bind="event.text"></span>
+                <span class="events-remove" ng-click="calendar.removeEvent(event)">&times;</span>
             </div>
             <form ng-submit='calendar.addEvent()'>
                 <input class="events-input_text" type="text" ng-model='calendar.model.text'><!--

@@ -39,6 +39,13 @@
       this.current = day;
     };
 
+    this.removeEvent = function (event) {
+      var index = this.current.events.indexOf(event);
+      if (index !== -1) {
+        this.current.events.splice(index, 1);
+      }
+    };
+
     // TODO: Add view for display and edit all month(s) events
     this.getEvents = function (days) {
       if (!Array.isArray(days)) {

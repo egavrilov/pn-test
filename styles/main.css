@@ -73,8 +73,46 @@
 .events-list{
   display: list-item;
   margin-left: 1em;
+  margin-bottom: .25em;
 }
 
+.events-remove {
+  float: right;
+  cursor: pointer;
+}
+
+
+.events-input_text, .events-submit {
+  display: inline-block;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  line-height: 2em;
+  margin-top: .5em;
+
+}
 .events-input_text {
+  width: 70%;
   outline: none;
+}
+.events-submit {
+  width: 30%;
+}
+
+@media (max-width:600px) {
+  .calendar-wrapper, .events {
+    display: block;
+    margin: 0 auto;
+  }
+
+  .events {
+    text-align: center;
+  }
+
+  .events-input_text, .events-submit {
+    display: block;
+    width: 100%;
+    border: 1px solid #eee;
+    background: #fff;
+  }
 }
