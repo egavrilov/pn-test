@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" ng-app='PubNative'>
+<head>
+    <meta charset="UTF-8">
+    <title>PubNative test</title>
+    <style>
+        .calendar {
+            width: 300px;
+        }
+
+        .calendar-weekdays {
+            font-size: 0;
+        }
+
+        .calendar-weekday {
+            display: inline-block;
+            width: 14.285%;
+            font-size: 1rem;
+            text-align: right;
+        }
+
+        .calendar-weekday_inactive {
+            color: #ccc;
+        }
+        .calendar-weekday_planned {
+            background: #ccc;
+        }
+    </style>
+</head>
+<body>
+<div class='calendar' calendar></div>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+<script type="text/ng-template" id='CalendarTemplate'>
+    <div class="calendar-title">
+        <div class="calendar-month"></div>
+        <div class="calendar-weekdays">
+            <div class="calendar-weekday">Sun</div>
+            <div class="calendar-weekday">Mon</div>
+            <div class="calendar-weekday">Tue</div>
+            <div class="calendar-weekday">Wed</div>
+            <div class="calendar-weekday">Thu</div>
+            <div class="calendar-weekday">Fri</div>
+            <div class="calendar-weekday">Sat</div>
+        </div>
+    </div>
+    <div class="calendar-weekday"
+         ng-repeat='day in calendar.daysInMonth()'
+         ng-class="{'calendar-weekday_inactive': day.inactive, 'calendar-weekday_planned': day.events.length}"
+         ng-bind="day.dayNum"
+         ng-click="calendar.editEvents = day"></div>
+
+    <div class="events" ng-repeat='event in calendar.editEvents.events'>
+
+    </div>
+    <form ng-submit='calendar.addEvent()' ng-show="calendar.editEvents">
+        <input type="text" ng-model='calendar.model.text'>
+        <button type="submit">Add</button>
+    </form>
+</script>
+<script>
+    angular.module('PubNative', [])
+            .factory('Calendar', function () {
+                var factory = {};
+                var date = new Date();
+                var cachedMonths = {};
+
+                factory.currentMonth = date.getMonth();
+                factory.currentYear = date.getFullYear();
+
+                factory.getMonth = function (year, month) {
+                    month = month || factory.currentMonth;
+                    year = year || factory.currentYear;
+                    var monthKey = getMonthKey(year, month);
+
+                    if (!cachedMonths[monthKey]) {
+                        cachedMonths[monthKey] = getDays(year, month);
+                        console.log(cachedMonths[monthKey]);
+                    }
+
+                    return cachedMonths[monthKey];
+                };
+
+                function getDays(year, month) {
+                    var currentMonthDays = calcDaysCount(year, month);
+                    var startDay = currentMonthDays[0].weekday;
+                    var lastDay = currentMonthDays.slice(-1)[0].weekday;
+
+                    if (month === factory.currentMonth && year === factory.currentYear) {
+                        var whiteHoles = calcWhiteHoles(startDay, lastDay);
+                        Array.prototype.unshift.apply(currentMonthDays, whiteHoles.prev);
+                        Array.prototype.push.apply(currentMonthDays, whiteHoles.next);
+                    }
+
+                    return currentMonthDays;
+                }
+
+                function calcDaysCount(year, month) {
+                    var lastDay = new Date(year, month + 1, 0);
+                    var daysArr = [];
+
+                    for (var i = lastDay.getDate(); i > 0; i--) {
+                        var dateObject = new Date(year, month, i);
+                        daysArr[i - 1] = {
+                            dayNum: i,
+                            weekday: dateObject.getDay()
+                        };
+                    }
+
+                    return daysArr;
+                }
+
+                function getMonthKey(year, month) {
+                    return [year, month].join('');
+                }
+
+                function calcWhiteHoles(startDay, lastDay) {
+                    var prevMonthIndex = factory.currentMonth - 1;
+                    var nextMonthIndex = factory.currentMonth + 1;
+                    var prevYear, nextYear, prevMonth, nextMonth;
+
+                    if (factory.currentMonth === 0) {
+                        prevMonthIndex = 11;
+                        prevYear = factory.currentYear - 1;
+                    }
+
+                    if (factory.currentMonth === 11) {
+                        nextMonthIndex = 0;
+                        nextYear = factory.currentYear + 1;
+                    }
+
+                    prevMonth = factory.getMonth(prevYear || factory.currentYear, prevMonthIndex).slice(-startDay).map(disableDay);
+                    nextMonth = factory.getMonth(nextYear || factory.currentYear, nextMonthIndex).slice(0, 6 - lastDay).map(disableDay);
+
+                    return {
+                        prev: prevMonth,
+                        next: nextMonth
+                    }
+                }
+
+                function disableDay(day) {
+                    day.inactive = true;
+                    return day;
+                }
+
+                return factory;
+            })
+            .directive('calendar', function () {
+                return {
+                    templateUrl: 'CalendarTemplate',
+                    controller: ['Calendar', CalendarController],
+                    controllerAs: 'calendar',
+                    bindToController: true
+                }
+            });
+
+    function CalendarController(Calendar) {
+        this.daysInMonth = Calendar.getMonth;
+        this.addEvent = function () {
+            if (!this.editEvents || !this.model.text) {
+                return;
+            }
+
+            if (!this.editEvents.events) {
+                this.editEvents.events = [];
+            }
+
+            this.editEvents.events.push({text: this.model.text});
+        }
+    }
+</script>
+</body>
+</html>
