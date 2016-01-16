@@ -1,0 +1,80 @@
+
+.calendar-wrapper {
+  display: inline-block;
+  width: 300px;
+  max-width: 100%;
+  vertical-align: top;
+}
+
+.calendar-title{
+  text-align: center;
+  border-bottom: 1px solid;
+}
+
+.calendar-weekdays {
+  font-size: 0;
+}
+
+.calendar-weekday {
+  display: inline-block;
+  width: 14.285%;
+  font-size: 1rem;
+  text-align: right;
+  padding: .25em .5em;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  border: 1px solid rgba(255,255,255,0.75);
+  cursor: pointer;
+  -webkit-transition: background-color 300ms;
+  -moz-transition: background-color 300ms;
+  -ms-transition: background-color 300ms;
+  -o-transition: background-color 300ms;
+  transition: background-color 300ms;
+}
+
+.calendar-weekday:hover {
+  background: rgba(0,0,0,0.05);
+}
+
+.calendar-weekday_disabled {
+  color: #ccc;
+  cursor: inherit;
+}
+
+.calendar-weekday_disabled:hover {
+  background: inherit;
+}
+
+.calendar-weekday_planned {
+  background: #ccc;
+}
+
+.calendar-weekday_active {
+  background: #444;
+  color: #fff;
+}
+.calendar-weekday_active:hover {
+  background: #666;
+}
+
+.events {
+  display: inline-block;
+  width: 300px;
+  max-width: 100%;
+  vertical-align: top;
+  margin: 0 1em;
+}
+
+.events-title {
+  margin-bottom: .25em;
+}
+
+.events-list{
+  display: list-item;
+  margin-left: 1em;
+}
+
+.events-input_text {
+  outline: none;
+}
